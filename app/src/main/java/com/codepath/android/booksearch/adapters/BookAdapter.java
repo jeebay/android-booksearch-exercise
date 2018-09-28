@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.android.booksearch.GlideApp;
-import com.codepath.android.booksearch.MyAppGlideModule;
 import com.codepath.android.booksearch.R;
 import com.codepath.android.booksearch.models.Book;
 
@@ -28,7 +26,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         public TextView tvTitle;
         public TextView tvAuthor;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
@@ -36,7 +34,30 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
             ivCover = (ImageView)itemView.findViewById(R.id.ivBookCover);
             tvTitle = (TextView)itemView.findViewById(R.id.tvTitle);
             tvAuthor = (TextView)itemView.findViewById(R.id.tvAuthor);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
         }
+    }
+
+    // Define listener member variable
+    private OnItemClickListener listener;
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(View.OnClickListener listener) {
+        this.listener = (OnItemClickListener) listener;
     }
 
     public BookAdapter(Context context, ArrayList<Book> aBooks) {
